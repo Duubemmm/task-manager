@@ -1,0 +1,32 @@
+services:
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    environment:
+      - PORT=5000
+      - MONGO_URL=mongodb://mongo:27017/taskmanager
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://localhost:3000/api
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge
